@@ -14,8 +14,7 @@ const urlSchema = new mongoose.Schema({
   short_url: String
 })
 const URL = mongoose.model('URL', urlSchema)
-const urlRegex = /^(https?:\/\/www\.)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
+const urlRegex = /^(https?:\/\/)(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}([\/\w.-]*)?(\?.*)?$/;
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors());
 app.use('/public', express.static(`${process.cwd()}/public`));
@@ -51,7 +50,6 @@ app.get('/api/shorturl/:shorturl', (req, res) =>{
   let shorturl = req.params.shorturl
   URL.findOne({short_url:shorturl})
   .then((founded) => {
-    console.log("FOUND: ",founded)
     if (founded == null) return res.json({"error": "no short url founded"})
     else return res.redirect(founded.original_url)
   })
